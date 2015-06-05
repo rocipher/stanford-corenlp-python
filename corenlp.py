@@ -150,7 +150,7 @@ class StanfordCoreNLP(object):
         props = "-props default.properties" 
         
         # add and check classpaths
-        jars = [corenlp_path + jar for jar in jars]
+        jars = [os.path.join(corenlp_path, jar) for jar in jars]
         for jar in jars:
             if not os.path.exists(jar):
                 logger.error("Error! Cannot locate %s" % jar)
@@ -250,11 +250,13 @@ if __name__ == '__main__':
                       help='Port to serve on (default: 8080)')
     parser.add_option('-H', '--host', default='127.0.0.1',
                       help='Host to serve on (default: 127.0.0.1. Use 0.0.0.0 to make public)')
+    parser.add_option('-P', '--path', default=None,
+                      help='Path to the dir containing the Stanford parser .jar file')
     options, args = parser.parse_args()
     server = jsonrpc.Server(jsonrpc.JsonRpc20(),
                             jsonrpc.TransportTcpIp(addr=(options.host, int(options.port))))
     
-    nlp = StanfordCoreNLP()
+    nlp = StanfordCoreNLP(options.path)
     server.register_function(nlp.parse)
     
     logger.info('Serving on http://%s:%s' % (options.host, options.port))
