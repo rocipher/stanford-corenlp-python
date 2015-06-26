@@ -252,13 +252,13 @@ if __name__ == '__main__':
                       help='Host to serve on (default: 127.0.0.1. Use 0.0.0.0 to make public)')
     parser.add_option('-P', '--path', default=None,
                       help='Path to the dir containing the Stanford parser .jar file')
-    parser.add_option('-cv', '--corenlp-version', default='3.4.1',
+    parser.add_option('-c', '--corenlpversion', default='3.4.1',
                       help='CoreNLP version')
     options, args = parser.parse_args()
     server = jsonrpc.Server(jsonrpc.JsonRpc20(),
                             jsonrpc.TransportTcpIp(addr=(options.host, int(options.port))))
     
-    nlp = StanfordCoreNLP(options.path, options.corenlp_version)
+    nlp = StanfordCoreNLP(options.path, options.corenlpversion)
     server.register_function(nlp.parse)
     
     logger.info('Serving on http://%s:%s' % (options.host, options.port))
